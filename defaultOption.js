@@ -4,13 +4,16 @@ const lineSeries = {
   showSymbol: false,
   lineStyle: {
     type: 'solid',
+    shadowOffsetX: 0,
+    shadowOffsetY: 2,
+    shadowBlur: 6
   },
   label: {
     show: false,
     position: 'top',
     color: '#333',
-    formatter: '{c}',
-  },
+    formatter: '{c}'
+  }
 };
 const pieSeries = {
   selectedOffset: 5,
@@ -21,8 +24,8 @@ const pieSeries = {
     show: false,
     position: 'outside',
     formatter: '{b}:{c}',
-    margin: '20%',
-  },
+    margin: '20%'
+  }
 };
 
 const barSeries = {
@@ -30,12 +33,12 @@ const barSeries = {
     show: false,
     position: 'top',
     formatter: '{c}',
-    color: '#333',
+    color: '#333'
   },
   barWidth: 10,
   itemStyle: {
-    barBorderRadius: 5,
-  },
+    barBorderRadius: 5
+  }
 };
 
 const gaugeSeries = {
@@ -47,7 +50,7 @@ const gaugeSeries = {
   startAngle: 180,
   endAngle: 0,
   splitLine: {
-    show: false,
+    show: false
   },
   axisLabel: { show: false },
   axisTick: { show: false },
@@ -56,8 +59,11 @@ const gaugeSeries = {
     lineStyle: {
       width: 6,
       shadowBlur: 0,
-      color: [[0.5, '#2772FF'], [1, '#F2F2F2']],
-    },
+      color: [
+        [0.5, '#2772FF'],
+        [1, '#F2F2F2']
+      ]
+    }
   },
   detail: {
     show: false,
@@ -66,15 +72,15 @@ const gaugeSeries = {
       name: {
         fontSize: 12,
         lineHeight: 12,
-        color: '#2B2E33',
+        color: '#2B2E33'
       },
       value: {
         fontSize: 16,
         lineHeight: 30,
-        color: '#14CC81',
-      },
-    },
-  },
+        color: '#14CC81'
+      }
+    }
+  }
 };
 
 // 合并对象,obj1是默认对象， obj2是传入对象
@@ -125,178 +131,169 @@ const getSeries = item => {
 };
 
 const getOption = (customize, type = false) => {
-  const { grid, tooltip, yAxis, xAxis, series, legend, ...rest } = customize;
+  const { grid, tooltip, yAxis, xAxis, series = [], ...rest } = customize;
+  // 判断serise内部是否使用的类目轴
+  const seriesType = series.map(item => item.type);
+  const bool = seriesType.some(item => ['bar', 'line'].includes(item));
   const defaultxAxis = [
     {
       type: 'category',
+      nameLocation: 'end',
       nameTextStyle: {
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
+        fontSize: 18
       },
       axisLine: {
-        show: true,
+        show: false
       },
       axisTick: {
         show: false,
+        alignWithLabel: true,
+        interval: 0,
+        inside: false
       },
       splitLine: {
-        show: true,
+        show: false,
+        interval: 0,
         lineStyle: {
           color: '#ccc',
+          width: 0.5,
           type: 'dashed',
-        },
+          opacity: 0.5
+        }
       },
       axisLabel: {
         show: true,
         interval: 0,
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
+        fontSize: 12
       },
       axisPointer: {
         show: true,
         type: 'line',
         label: {
           show: false,
+          margin: 5,
+          color: '#999',
+          fontFamily: 'PingFangSC-Regular, sans-serif',
+          backgroundColor: 'none',
+          fontSize: 8
         },
         lineStyle: {
           color: '#979797',
-          width: 1,
+          width: 0.8
         },
         shadowStyle: {
-          color: '#5594F2',
+          color: '#5594F2'
         },
-        triggerTooltip: false,
-      },
-    },
+        triggerTooltip: true
+      }
+    }
   ];
-
   const defaultyAxis = [
     {
       show: true,
-      data: yAxis.data,
-      type: 'value',
+      position: 'left',
       nameTextStyle: {
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
+        fontSize: 18
       },
       axisLine: {
-        show: true,
+        show: false
       },
       axisTick: {
         show: false,
+        alignWithLabel: true,
+        interval: 0,
+        inside: false
       },
       axisLabel: {
         show: true,
+        interval: 0,
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
+        fontSize: 12
       },
       splitLine: {
-        show: true,
+        show: false,
+        interval: 0,
         lineStyle: {
           color: '#ccc',
+          width: 0.5,
           type: 'dashed',
-        },
-      },
+          opacity: 0.5
+        }
+      }
     },
     {
       show: true,
-      data: yAxis.data,
-      type: 'value',
+      position: 'left',
       nameTextStyle: {
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
+        fontSize: 18
       },
       axisLine: {
-        show: true,
+        show: false
       },
       axisTick: {
         show: false,
+        alignWithLabel: true,
+        interval: 0,
+        inside: false
       },
       axisLabel: {
         show: true,
+        interval: 0,
         fontFamily: 'PingFangSC-Regular, sans-serif',
-        fontSize: '22px',
-        lineHeight: '30px',
+        fontSize: 12
       },
       splitLine: {
-        show: true,
+        show: false,
+        interval: 0,
         lineStyle: {
           color: '#ccc',
+          width: 0.5,
           type: 'dashed',
-        },
-      },
-    },
+          opacity: 0.5
+        }
+      }
+    }
   ];
-
   const defaultTooltip = {
-    show: true,
+    show: false,
+    trigger: bool ? 'axis' : 'item',
     triggerOn: 'mousemove|click',
     confine: true,
     formatter: '{b}: {c}',
     backgroundColor: 'rgba(1,27,100,0.7)',
     textStyle: {
-      fontSize: 10,
-    },
+      fontSize: 10
+    }
   };
   const tempSeries = series.map(item => getSeries(item));
-  const defautlLegend = {
-    selectedMode: false,
-  };
 
   let tempxAxis = [];
   let tempyAxis = [];
   let tempTooltip = {};
-  let tempLegend = {};
-  const yAxisStandard = {
-    type: 'value',
-    data: yAxis.data,
-    // 轴线
-    axisLine: {
-      show: true,
-    },
-    axisTick: {
-      show: false,
-    },
-    axisLabel: {
-      show: true,
-      fontFamily: 'PingFangSC-Regular, sans-serif',
-      fontSize: '22px',
-    },
-    splitLine: {
-      // show: true,
-      lineStyle: {
-        color: '#ccc',
-        type: 'dashed',
-      },
-    },
-  };
-  tempyAxis =
-    yAxis instanceof Array
-      ? yAxis.map(item => {
-          return Object.assign({}, yAxisStandard, item);
-        })
-      : Object.assign(yAxisStandard, yAxis || {});
+
   tempxAxis = xAxis ? objCombine(defaultxAxis, xAxis) : defaultxAxis;
-  // tempyAxis = yAxis ? objCombine(defaultyAxis, yAxis) : defaultyAxis;
+  tempyAxis = yAxis ? objCombine(defaultyAxis, yAxis) : defaultyAxis;
   tempTooltip = tooltip ? objCombine(defaultTooltip, tooltip) : defaultTooltip;
-  tempLegend = legend ? objCombine(defautlLegend, legend) : defautlLegend;
   return {
     color: type ? linearColors() : null,
     tooltip: tempTooltip,
-    legend: tempLegend,
     grid: {
       containLabel: true,
       top: 10,
       left: 0,
       bottom: 0,
       right: 0,
-      ...grid,
+      ...grid
     },
     xAxis: tempxAxis,
     yAxis: tempyAxis,
     series: tempSeries,
     // series,
-    ...rest,
+    ...rest
   };
 };
 
