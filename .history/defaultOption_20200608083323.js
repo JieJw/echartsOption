@@ -1,52 +1,54 @@
-import { linearColors } from './colors';
-require('echarts/map/js/china.js');
+import { linearColors } from "./colors";
+import echarts from "echarts";
+require("echarts/map/js/china.js");
 const lineSeries = {
   showSymbol: false,
   lineStyle: {
-    type: 'solid',
+    type: "solid",
     shadowOffsetX: 0,
     shadowOffsetY: 2,
-    shadowBlur: 6
+    shadowBlur: 6,
   },
   label: {
     show: false,
-    position: 'top',
-    color: '#333',
-    formatter: '{c}'
-  }
+    position: "top",
+    color: "#333",
+    formatter: "{c}",
+  },
 };
 
 const pieSeries = {
   selectedOffset: 5,
   hoverOffset: 5,
-  radius: ['55%', '85%'],
+  radius: ["55%", "85%"],
   hoverAnimation: false,
   label: {
     show: false,
-    position: 'outside',
-    formatter: '{b}:{c}',
-    margin: '20%'
-  }
+    position: "outside",
+    formatter: "{b}:{c}",
+    margin: "20%",
+  },
 };
 
 const barSeries = {
   label: {
     show: false,
-    position: 'top',
-    formatter: '{c}',
-    color: '#333'
+    position: "top",
+    formatter: "{c}",
+    color: "#333",
   },
   barWidth: 10,
+  barGap: "0%",
   itemStyle: {
-    barBorderRadius: 0
-  }
+    barBorderRadius: 0,
+  },
 };
 
 const gaugeSeries = {
-  center: ['50%', '50%'],
-  type: 'gauge',
-  name: '项目名称',
-  radius: '96%',
+  center: ["50%", "50%"],
+  type: "gauge",
+  name: "项目名称",
+  radius: "96%",
   splitNumber: 4,
   startAngle: 225,
   endAngle: -45,
@@ -57,24 +59,24 @@ const gaugeSeries = {
     show: false,
     length: 7,
     lineStyle: {
-      color: 'auto',
-      width: 1
-    }
+      color: "auto",
+      width: 1,
+    },
   },
   // 仪表盘之间的刻度
   axisTick: {
     show: false,
     length: 0,
     lineStyle: {
-      color: 'auto'
-    }
+      color: "auto",
+    },
   },
   axisLabel: {
     show: false,
-    color: '#454a55',
+    color: "#454a55",
     distance: 2,
     fontSize: 12,
-    fontFamily: 'PingFangSC-Regular'
+    fontFamily: "PingFangSC-Regular",
   },
 
   pointer: { show: false, length: 20, width: 2 },
@@ -82,34 +84,34 @@ const gaugeSeries = {
   axisLine: {
     lineStyle: {
       width: 3,
-      color: [[1, '#454A55']]
-    }
+      color: [[1, "#454A55"]],
+    },
   },
   detail: {
     show: false,
-    offsetCenter: [0, '-10%'],
+    offsetCenter: [0, "-10%"],
     rich: {
       name: {
         fontSize: 12,
         lineHeight: 12,
-        color: '#2B2E33'
+        color: "#2B2E33",
       },
       value: {
         fontSize: 16,
         lineHeight: 30,
-        color: '#14CC81'
-      }
-    }
-  }
+        color: "#14CC81",
+      },
+    },
+  },
 };
 
 // 合并对象,obj1是默认对象， obj2是传入对象
 function objCombine(...obj) {
-  const bool = obj.some(item => Array.isArray(item));
+  const bool = obj.some((item) => Array.isArray(item));
   const res = bool ? [] : {};
 
   function combine(key, item, res) {
-    const isObj = typeof item[key] === 'object';
+    const isObj = typeof item[key] === "object";
     if (isObj) {
       if (!res[key]) {
         res[key] = Array.isArray(res[key]) ? [] : {};
@@ -118,7 +120,7 @@ function objCombine(...obj) {
       if (Array.isArray(item[key])) {
         res[key] = item[key];
       } else {
-        Object.keys(item[key]).forEach(_item => {
+        Object.keys(item[key]).forEach((_item) => {
           combine(_item, item[key], res[key]);
         });
       }
@@ -126,8 +128,8 @@ function objCombine(...obj) {
       res[key] = item[key];
     }
   }
-  obj.forEach(item => {
-    Object.keys(item).forEach(key => {
+  obj.forEach((item) => {
+    Object.keys(item).forEach((key) => {
       combine(key, item, res);
     });
   });
@@ -135,15 +137,15 @@ function objCombine(...obj) {
   return res;
 }
 
-const getSeries = item => {
-  switch (item.type || 'line') {
-    case 'line':
+const getSeries = (item) => {
+  switch (item.type || "line") {
+    case "line":
       return objCombine(lineSeries, item);
-    case 'bar':
+    case "bar":
       return objCombine(barSeries, item);
-    case 'pie':
+    case "pie":
       return objCombine(pieSeries, item);
-    case 'gauge':
+    case "gauge":
       return objCombine(gaugeSeries, item);
     default:
       return item;
@@ -162,8 +164,8 @@ const getOption = (customize, type = false) => {
     ...rest
   } = customize;
   // 判断serise内部是否使用的类目轴
-  const seriesType = series.map(item => item.type);
-  const bool = seriesType.some(item => ['bar', 'line'].includes(item));
+  const seriesType = series.map((item) => item.type);
+  const bool = seriesType.some((item) => ["bar", "line"].includes(item));
 
   const defaultLegend = {
     show: false,
@@ -172,152 +174,150 @@ const getOption = (customize, type = false) => {
     itemWidth: 20,
     itemHeight: 20,
     borderRadius: 0,
-    icon: 'rect',
+    icon: "rect",
     textStyle: {
-      color: '#666',
-      borderRadius: 0
+      color: "#666",
+      borderRadius: 0,
     },
-    data: []
+    data: [],
   };
 
   const defaultxAxis = {
-    type: 'category',
-    nameLocation: 'end',
+    type: "category",
+    nameLocation: "end",
     nameTextStyle: {
-      fontFamily: 'PingFangSC-Regular, sans-serif',
-      fontSize: 18
+      fontFamily: "PingFangSC-Regular, sans-serif",
+      fontSize: 18,
     },
     axisLine: {
-      show: false
+      show: false,
     },
     axisTick: {
       show: false,
       alignWithLabel: true,
       interval: 0,
-      inside: false
+      inside: false,
     },
     splitLine: {
       show: false,
       interval: 0,
       lineStyle: {
-        color: '#ccc',
+        color: "#ccc",
         width: 0.5,
-        type: 'dashed',
-        opacity: 0.5
-      }
+        type: "dashed",
+        opacity: 0.5,
+      },
     },
     axisLabel: {
       show: true,
       interval: 0,
-      fontFamily: 'PingFangSC-Regular, sans-serif',
+      fontFamily: "PingFangSC-Regular, sans-serif",
       fontSize: 12,
-      color: '#6D6E71'
     },
     axisPointer: {
       show: true,
-      type: 'line',
+      type: "line",
       label: {
         show: false,
         margin: 5,
-        color: '#999',
-        fontFamily: 'PingFangSC-Regular, sans-serif',
-        backgroundColor: 'none',
-        fontSize: 8
+        color: "#999",
+        fontFamily: "PingFangSC-Regular, sans-serif",
+        backgroundColor: "none",
+        fontSize: 8,
       },
       lineStyle: {
-        color: '#979797',
-        width: 0.8
+        color: "#979797",
+        width: 0.8,
       },
       shadowStyle: {
-        color: '#5594F2'
+        color: "#5594F2",
       },
-      triggerTooltip: true
-    }
+      triggerTooltip: true,
+    },
   };
 
   const defaultyAxis = {
     show: true,
-    position: 'left',
+    position: "left",
     nameTextStyle: {
-      fontFamily: 'PingFangSC-Regular, sans-serif',
-      fontSize: 18
+      fontFamily: "PingFangSC-Regular, sans-serif",
+      fontSize: 18,
     },
     axisLine: {
-      show: false
+      show: false,
     },
     axisTick: {
       show: false,
       alignWithLabel: true,
       interval: 0,
-      inside: false
+      inside: false,
     },
     axisLabel: {
       show: true,
       interval: 0,
-      fontFamily: 'PingFangSC-Regular, sans-serif',
-      fontSize: 12
+      fontFamily: "PingFangSC-Regular, sans-serif",
+      fontSize: 12,
     },
     splitLine: {
       show: false,
       interval: 0,
       lineStyle: {
-        color: 'rgba(204,204,204,0.5)',
+        color: "#ccc",
         width: 0.5,
-        type: 'dashed'
-      }
-    }
+        type: "dashed",
+        opacity: 0.5,
+      },
+    },
   };
 
   const defaultTooltip = {
     show: false,
-    trigger: bool ? 'axis' : 'item',
-    triggerOn: 'mousemove|click',
+    trigger: bool ? "axis" : "item",
+    triggerOn: "mousemove|click",
     confine: true,
-    formatter: '{b}: {c}',
-    backgroundColor: 'rgba(1,27,100,0.7)',
+    formatter: "{b}: {c}",
+    backgroundColor: "rgba(1,27,100,0.7)",
     textStyle: {
-      fontSize: 10
-    }
+      fontSize: 10,
+    },
   };
 
   const defaultGeo = {
-    map: 'china',
+    map: "china",
     zoom: 1.25,
     roam: false,
     itemStyle: {
-      borderColor: '#232532',
+      borderColor: "#232532",
       borderWidth: 1.5,
-      areaColor: '#8d9bc8',
+      areaColor: "#8d9bc8",
       emphasis: {
         borderWidth: 1.6,
-        areaColor: '#8d9bc8',
-        borderColor: '#232532'
-      }
-    }
+        areaColor: "#8d9bc8",
+        borderColor: "#232532",
+      },
+    },
   };
 
-  const tempSeries = series.map(item => getSeries(item));
+  const tempSeries = series.map((item) => getSeries(item));
 
-  // const tempxAxis, tempLegend, tempyAxis, tempTooltip, tempGeo;
+  let tempxAxis, tempLegend, tempyAxis, tempTooltip, tempGeo;
 
-  const tempxAxis =
+  tempxAxis =
     xAxis instanceof Array
-      ? xAxis.map(item => {
+      ? xAxis.map((item) => {
           return objCombine(defaultxAxis, item);
         })
       : objCombine(defaultxAxis, xAxis || {});
-  const tempyAxis =
+  tempyAxis =
     yAxis instanceof Array
-      ? yAxis.map(item => {
+      ? yAxis.map((item) => {
           return objCombine(defaultyAxis, item);
         })
       : objCombine(defaultyAxis, yAxis || {});
-  const tempGeo = geo ? objCombine(defaultGeo, geo) : null;
+  tempGeo = geo ? objCombine(defaultGeo, geo) : null;
 
-  const tempTooltip = tooltip
-    ? objCombine(defaultTooltip, tooltip)
-    : defaultTooltip;
-  const tempLegend = legend ? objCombine(defaultLegend, legend) : defaultLegend;
+  tempTooltip = tooltip ? objCombine(defaultTooltip, tooltip) : defaultTooltip;
+  tempLegend = legend ? objCombine(defaultLegend, legend) : defaultLegend;
   return {
     color: type ? linearColors() : null,
     tooltip: tempTooltip,
@@ -327,14 +327,14 @@ const getOption = (customize, type = false) => {
       left: 0,
       bottom: tempLegend.show ? 30 : 0,
       right: 0,
-      ...grid
+      ...grid,
     },
     geo: tempGeo,
     legend: tempLegend,
     xAxis: tempxAxis,
     yAxis: tempyAxis,
     series: tempSeries,
-    ...rest
+    ...rest,
   };
 };
 
